@@ -1,0 +1,33 @@
+.home__container {
+  width: 100%;
+  height: 100%;
+  background-color: red;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.home__img {
+  background: url("../../src/assets/maximilian-meyer-PbpxXgqoCxE-unsplash.jpg");
+  height: 100vh;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  align-items:flex-end ;
+}
+
+.home__details {
+  height: 100vh;
+  background-color: rgb(65, 105, 136);
+}
+
+.home__hero__info {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #fff;
+    margin-bottom: 20vh;
+    
+}
+
