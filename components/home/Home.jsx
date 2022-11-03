@@ -1,13 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./home.css";
 
 const Home = () => {
   const [city, setCity] = useState("kampala");
   const [result, setResult] = useState(null);
 
+  const formRef = useRef()
+
   const fetchApi = async (city) => {
     const data = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=19b3f1f33b2e5574d503f185c06659f3`
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=`
     ).then((res) => res.json())
     .then((data) => setResult(data));
 
@@ -34,6 +36,8 @@ const Home = () => {
 
   console.log(result);
 
+  console.log(formRef.current)
+
   return (
     <div className="home__container">
       <div className="home__img">
@@ -56,6 +60,7 @@ const Home = () => {
             <input
               type="text"
               className="home__input"
+              ref={formRef}
               onChange={(e) => setCity(e.target.value)}
             />
             <button type="submit" className="weather__button">
