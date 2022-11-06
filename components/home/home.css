@@ -79,13 +79,3 @@ form {
   margin: 50px 0;
   display: flex;
 }
-
-.weather__ul ul {
-  list-style: none;
-}
-
-.weather__ul ul li {
-  padding: 10px 0;
-  font-size: 1.2em;
-  color: rgb(203, 201, 201);
-}

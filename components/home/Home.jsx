@@ -2,55 +2,60 @@ import { useState, useEffect, useRef } from "react";
 import "./home.css";
 
 const Home = () => {
-  const [city, setCity] = useState("kampala");
-  const [result, setResult] = useState(null);
+  const initialValue = "kampala";
 
-  const formRef = useRef()
+  const city = useRef();
+  const [result, setResult] = useState(null);
 
   const fetchApi = async (city) => {
     const data = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=`
-    ).then((res) => res.json())
-    .then((data) => setResult(data));
-
-   
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=19b3f1f33b2e5574d503f185c06659f3`
+    )
+      .then((res) => res.json())
+      .then((data) =>
+        data.cod === "404" ? alert("City Not Found") : setResult(data)
+      );
   };
 
   useEffect(() => {
-    fetchApi(city);
-    console.log("heyy");
+    fetchApi(initialValue);
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await fetchApi(city);
+    await fetchApi(city.current.value);
+    city.current.value = "";
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
-  // console.log(result.clouds.all);
-
-  // const { clouds, main, name, rain, weather, wind } = result;
-
-  if(result === null) {
-    return <p>Loading</p>
+  if (result === null) {
+    return <p>Loading</p>;
   }
 
   console.log(result);
-
-  console.log(formRef.current)
 
   return (
     <div className="home__container">
       <div className="home__img">
         <div className="home__hero__info">
           <div>
-            <h1>26 C</h1>
+            <h1>
+              {result.main.temp} {"\u00b0"}C
+            </h1>
           </div>
           <div>
-            <h3>Kampala</h3>
-            <p>31 - October - 2022</p>
+            <h3>{result.name}</h3>
+            <p>{new Date().toISOString().split("T")[0]}</p>
           </div>
           <div>
-            <p>Suuny</p>
+            <p>{result.weather[0].description}</p>
+            <img
+              src={`http://openweathermap.org/img/wn/${result.weather[0].icon}@2x.png`}
+              alt="weather__icon"
+            />
           </div>
         </div>
       </div>
@@ -60,20 +65,13 @@ const Home = () => {
             <input
               type="text"
               className="home__input"
-              ref={formRef}
-              onChange={(e) => setCity(e.target.value)}
+              ref={city}
+              placeholder="Choose City"
             />
             <button type="submit" className="weather__button">
               Search
             </button>
           </form>
-          <div className="weather__ul">
-            <ul>
-              <li>Kampala</li>
-              <li>Nairobi</li>
-              <li>Dodoma</li>
-            </ul>
-          </div>
           <hr />
         </div>
         <div className="weather__div">
@@ -85,15 +83,15 @@ const Home = () => {
             </span>
             <span className="weather__details">
               <h4>Humidity</h4>
-              {/* <h3>{result.main.humidity}%</h3> */}
+              <h3>{result.main.humidity}%</h3>
             </span>
             <span className="weather__details">
               <h4>Wind</h4>
-              {/* <h3>{wind.speed}</h3> */}
+              <h3>{result.wind.speed}m/s</h3>
             </span>
             <span className="weather__details">
               <h4>Rain</h4>
-              <h3>23%</h3>
+              <h3>{result.wind.speed}mm</h3>
             </span>
           </div>
           <hr />
