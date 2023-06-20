@@ -1,58 +1,101 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./home.css";
 
 const Home = () => {
-  const [city, setCity] = useState("kampala");
-  const [result, setResult] = useState({});
+  const initialValue = "kampala";
+
+  const city = useRef();
+  const [result, setResult] = useState(null);
 
   const fetchApi = async (city) => {
     const data = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=`
-    );
-
-    const response = await data.json();
-
-    // console.log(response);
-
-    return response;
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=19b3f1f33b2e5574d503f185c06659f3`
+    )
+      .then((res) => res.json())
+      .then((data) =>
+        data.cod === "404" ? alert("City Not Found") : setResult(data)
+      );
   };
 
   useEffect(() => {
-    fetchApi(city);
+    fetchApi(initialValue);
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = await fetchApi(city);
-
-    console.log(data);
+    await fetchApi(city.current.value);
+    city.current.value = "";
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
+
+  if (result === null) {
+    return <p>Loading</p>;
+  }
+
+  console.log(result);
 
   return (
     <div className="home__container">
       <div className="home__img">
         <div className="home__hero__info">
           <div>
-            <h1>26 C</h1>
+            <h1>
+              {result.main.temp} {"\u00b0"}C
+            </h1>
           </div>
           <div>
-            <h3>Kampala</h3>
-            <p>31 - October - 2022</p>
+            <h3>{result.name}</h3>
+            <p>{new Date().toISOString().split("T")[0]}</p>
           </div>
           <div>
-            <p>Suuny</p>
+            <p>{result.weather[0].description}</p>
+            <img
+              src={`http://openweathermap.org/img/wn/${result.weather[0].icon}@2x.png`}
+              alt="weather__icon"
+            />
           </div>
         </div>
       </div>
       <div className="home__details">
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            className=""
-            onChange={(e) => setCity(e.target.value)}
-          />
-          <button type="submit">Search</button>
-        </form>
+        <div className="weather__div">
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              className="home__input"
+              ref={city}
+              placeholder="Choose City"
+            />
+            <button type="submit" className="weather__button">
+              Search
+            </button>
+          </form>
+          <hr />
+        </div>
+        <div className="weather__div">
+          <h4 className="h4">Weather Conditions</h4>
+          <div>
+            <span className="weather__details">
+              <h4>Cloudy</h4>
+              <h3>{result.clouds.all}%</h3>
+            </span>
+            <span className="weather__details">
+              <h4>Humidity</h4>
+              <h3>{result.main.humidity}%</h3>
+            </span>
+            <span className="weather__details">
+              <h4>Wind</h4>
+              <h3>{result.wind.speed}m/s</h3>
+            </span>
+            <span className="weather__details">
+              <h4>Rain</h4>
+              <h3>{result.wind.speed}mm</h3>
+            </span>
+          </div>
+          <hr />
+        </div>
       </div>
     </div>
   );
